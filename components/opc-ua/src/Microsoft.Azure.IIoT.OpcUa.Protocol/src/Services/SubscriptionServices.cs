@@ -1282,8 +1282,6 @@ namespace Microsoft.Azure.IIoT.OpcUa.Protocol.Services {
                     // reset the update timer
                     _pendingAlarmsUpdateTimer.Stop();
                     SendPendingAlarms(true);
-                    // clearing the dirty flag
-                    EventTemplate.PendingAlarms.Dirty = false;
                     _pendingAlarmsUpdateTimer.Start();
                     _pendingAlarmsSnapshotTimer.Start();
                 }
@@ -1514,6 +1512,9 @@ namespace Microsoft.Azure.IIoT.OpcUa.Protocol.Services {
                         NodeId = Item.StartNodeId,
                         StringTable = null
                     };
+
+                    // clearing flag here so that any updates while processing the arrays are registered
+                    pendingAlarmsOptions.Dirty = false;
                     var values = PendingAlarmEvents.Values.Select(x => x.Value).ToList();
                     pendingAlarmsNotification.Value = new DataValue(new Variant(values));
 
@@ -1527,10 +1528,6 @@ namespace Microsoft.Azure.IIoT.OpcUa.Protocol.Services {
                     };
                     message.Notifications.Add(pendingAlarmsNotification);
                     (Item.Subscription?.Handle as SubscriptionWrapper)?.SendMessage(message);
-
-                    if (!snapshot) {
-                        pendingAlarmsOptions.Dirty = false;
-                    }
                 }
             }
 
