@@ -1267,18 +1267,26 @@ namespace Microsoft.Azure.IIoT.OpcUa.Protocol.Services {
             }
 
             private void OnPendingAlarmsUpdateTimerElapsed(object sender, System.Timers.ElapsedEventArgs e) {
-                if (EventTemplate?.PendingAlarms?.Dirty == true) {
-                    SendPendingAlarms(false);
+                if (EventTemplate?.PendingAlarms?.IsEnabled == true && 
+                    EventTemplate?.PendingAlarms?.Dirty == true) {
                     // reset the snapshot timer
                     _pendingAlarmsSnapshotTimer.Stop();
+                    SendPendingAlarms(false);
                     _pendingAlarmsSnapshotTimer.Start();
                 }
                 _pendingAlarmsUpdateTimer.Start();
             }
 
             private void OnPendingAlarmsSnapshotTimerElapsed(object sender, System.Timers.ElapsedEventArgs e) {
-                SendPendingAlarms(true);
-                _pendingAlarmsSnapshotTimer.Start();
+                if (EventTemplate?.PendingAlarms?.IsEnabled == true) {
+                    // reset the update timer
+                    _pendingAlarmsUpdateTimer.Stop();
+                    SendPendingAlarms(true);
+                    // clearing the dirty flag
+                    EventTemplate.PendingAlarms.Dirty = false;
+                    _pendingAlarmsUpdateTimer.Start();
+                    _pendingAlarmsSnapshotTimer.Start();
+                }
             }
 
             /// <summary>
