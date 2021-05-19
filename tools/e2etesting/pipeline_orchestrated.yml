@@ -2,6 +2,14 @@ name: $(Date:yyyyMMdd)$(Rev:rr)
 trigger: none
 pr: none
 
+schedules:
+- cron: "0 10 * * *"
+  displayName: Nightly build of develop branch.
+  branches:
+    include:
+    - develop
+  always: true
+
 # this is being defined in app-ci pipeline
 resources:
   pipelines:
