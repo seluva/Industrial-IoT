@@ -26,15 +26,6 @@
         "edgeVmSize": {
             "type": "string",
             "defaultValue": "Standard_B2ms",
-            "allowedValues": [
-                "",
-                "Standard_B2ms",
-                "Standard_B4ms",
-                "Standard_B8ms",
-                "Standard_B12ms",
-                "Standard_B16ms",
-                "Standard_B20ms"
-            ],
             "metadata": {
                 "description": "Size of the IoT Edge VM"
             }
